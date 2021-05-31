@@ -27,7 +27,7 @@ services:
     ports:
       - '${PORT_HTTP:-80}:80'
     volumes:
-      - './:/srv/app:ro'
+      - './app:/srv/app:ro'
       - './config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
       - './config/apache/vhost.conf:/usr/local/apache2/conf/vhost.conf:ro'
     networks:
@@ -38,9 +38,9 @@ services:
     command: '--default-authentication-plugin=mysql_native_password'
     environment:
       MYSQL_ROOT_PASSWORD: 'root'
-      MYSQL_USER: '${APP_DATABASE_USER}'
-      MYSQL_DATABASE: '${APP_DATABASE_NAME}'
-      MYSQL_PASSWORD: '${APP_DATABASE_PASSWORD}'
+      MYSQL_USER: '${APP_DATABASE_USER:-test_user}'
+      MYSQL_DATABASE: '${APP_DATABASE_NAME:-test_db}'
+      MYSQL_PASSWORD: '${APP_DATABASE_PASSWORD:-test_pass}'
     volumes:
       - './config/mysql/initdb.d:/docker-entrypoint-initdb.d:ro'
     ports:

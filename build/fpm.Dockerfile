@@ -1,4 +1,4 @@
-FROM php:7.4.19-buster
+FROM php:7.4.19-fpm-buster
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -16,7 +16,13 @@ RUN apt-get -y update && \
     git \
     curl \
     zip \
-    openssl && \
+    openssl \
+    libcurl4 \
+    libcurl4-openssl-dev \
+    zlib1g-dev \
+    libzip-dev \
+    libicu-dev \
+    libonig-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_mysql && \
@@ -30,14 +36,13 @@ RUN docker-php-ext-install pdo_mysql && \
     docker-php-ext-install gettext && \
     docker-php-ext-install exif
 
+RUN pecl install xdebug-2.8.0 && \
+    docker-php-ext-enable xdebug
+
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
 
-RUN ln -s /usr/sbin/php-fpm7.4 /usr/local/sbin/php-fpm && \
-    usermod --uid 1000 www-data && groupmod --gid 1000 www-data && \
-    mkdir /srv/pim && \
-    sed -i "s#listen = /run/php/php7.4-fpm.sock#listen = 9000#g" /etc/php/7.4/fpm/pool.d/www.conf && \
-    mkdir -p /run/php
+RUN usermod --uid 1000 www-data && groupmod --gid 1000 www-data
