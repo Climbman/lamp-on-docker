@@ -12,6 +12,7 @@ services:
     volumes:
       - './app:/srv/app'
       - '${HOST_COMPOSER_HOME:-~/.composer}:/var/www/.composer'
+      - './config/php/php.ini:/usr/local/etc/php/php.ini:ro'
     working_dir: '/srv/app'
     command: 'php-fpm -F'
     init: true
