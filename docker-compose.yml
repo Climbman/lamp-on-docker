@@ -4,7 +4,7 @@ version: "3.7"
 services:
   fpm:
     build:
-      dockerfile: ./build/fpm.Dockerfile
+      dockerfile: ./docker/build/fpm.Dockerfile
       context: .
     environment:
       APP_ENV: '${APP_ENV:-prod}'
@@ -12,7 +12,7 @@ services:
     volumes:
       - './app:/srv/app'
       - '${HOST_COMPOSER_HOME:-~/.composer}:/var/www/.composer'
-      - './config/php/php.ini:/usr/local/etc/php/php.ini:ro'
+      - './docker/config/php/php.ini:/usr/local/etc/php/php.ini:ro'
     working_dir: '/srv/app'
     command: 'php-fpm -F'
     init: true
@@ -29,8 +29,8 @@ services:
       - '${PORT_HTTP:-80}:80'
     volumes:
       - './app:/srv/app:ro'
-      - './config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
-      - './config/apache/vhost.conf:/usr/local/apache2/conf/vhost.conf:ro'
+      - './docker/config/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro'
+      - './docker/config/apache/vhost.conf:/usr/local/apache2/conf/vhost.conf:ro'
     networks:
       - 'app'
 
@@ -43,7 +43,7 @@ services:
       MYSQL_DATABASE: '${APP_DATABASE_NAME:-test_db}'
       MYSQL_PASSWORD: '${APP_DATABASE_PASSWORD:-test_pass}'
     volumes:
-      - './config/mysql/initdb.d:/docker-entrypoint-initdb.d:ro'
+      - './docker/config/mysql/initdb.d:/docker-entrypoint-initdb.d:ro'
     ports:
       - '${APP_PORT_MYSQL:-33006}:3306'
     networks:
